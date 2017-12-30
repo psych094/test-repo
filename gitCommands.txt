@@ -250,3 +250,54 @@ area and the right column tells the status of the files in the working directory
 An M in the left column would mean a tracked file has been modified?
 Yep. Modified tracked file.
 
+Ignoring files (Already know such a feature exists :P):
+There are files that need to be ignored and not added into the commits or completely
+ignored by Git itself. These files may be log files or files produced by a build system.
+These files can be ignored by Git by creating a list of patterns to match them in a file
+named ".gitignore".
+In an existing project, inside the .gitignore file could contain the following:
+$ cat .gitignore
+*.[oa]
+*~
+The first pattern tells to ignore any files ending with ".o" or ".a". These are object or
+archive files created from compiling source codes. The second pattern are of file names
+ending with a tilde (~). Filenames ending with a tilde are usually the temp files text
+editors such as Emacs use to mark temporary files.
+Other file formats that may be present are log, tmp or pid directory, automatically generated
+documentation and list goes on and on.
+Good idea to set up a .gitignore file in a new repository before committing files.
+-_- Now the writer talks about it -_-
+
+Rules for patterns inside .gitignore are:
+- Blank lines or lines starting with # are ignored. (No kidding about blank lines -_-)
+- Standard glob patterns work, and will be applied recursively throughout the entire
+working tree. (Hm-hmm)
+- You can start patterns with a forward slash (/) to avoid recursivity. (Huh?)
+- You can end patterns with a forward slash (/) to specify a directory.
+- You can negate a pattern by starting it with an exclamation point (!). What?! o.O
+
+Glob patterns: Simplified regular expressions (Ugh!) that shells (Yay!) use.
+- An asterisk matches zero or more characters.
+- [abc] matches any (one) character inside the square brackets.
+- A question mark (?) matches a single character.
+- Brackets enclosing characters separated by a hyphen match any characters between them.
+[0-9] would match any (one) character from 0 to 9.
+[a-z] any lowercase letters from a to z.
+[A-Z], any uppercase letters from A to Z.
+- Two asterisks to match nested directories.
+a/**/z would match a file named z in any sub-directory inside a. (Okay. This was easy to
+understand.)
+
+Examples:
+# ignore .log files
+*.log
+# but do track lib.a, even though you're ignoring .a files above
+!lib.a (Oh. That's what it meant!)
+# only ignore the TODO file in the current directory, not subdir/TODO
+/TODO
+# ignore all files in the build directory
+build/
+# ignore doc/notes.txt, but not doc/server/arch.txt
+doc/*.txt
+# ignore all .pdf files in the doc/ directory and any of its subdirectories.
+doc/**/*.pdf

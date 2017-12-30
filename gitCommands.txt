@@ -288,16 +288,3 @@ Glob patterns: Simplified regular expressions (Ugh!) that shells (Yay!) use.
 a/**/z would match a file named z in any sub-directory inside a. (Okay. This was easy to
 understand.)
 
-Examples:
-# ignore .log files
-*.log
-# but do track lib.a, even though you're ignoring .a files above
-!lib.a (Oh. That's what it meant!)
-# only ignore the TODO file in the current directory, not subdir/TODO
-/TODO
-# ignore all files in the build directory
-build/
-# ignore doc/notes.txt, but not doc/server/arch.txt
-doc/*.txt
-# ignore all .pdf files in the doc/ directory and any of its subdirectories.
-doc/**/*.pdf

@@ -1,0 +1,248 @@
+<<<<	PART 1    >>>>
+Initial setup when running git:
+
+Git contains 2 configuration files. The "git config" command is used to set the values
+in the config files.
+In the Unix environment:
+1) /etc/gitconfig: Holds values for all users and repositories in the system.
+These values are/have to be defined. The "--system" switch has to be passed to make
+changes to the system config file.
+2) ~/.gitconfig or ~/.config/git/config: Holds values specifically for the user the config file
+is present in. The "--global" switch has to be passed to make changes to the user config
+file.
+3) config inside the repo directory (./.git/config): Holds values specifically for the repo
+being worked on. No switches have to passed in order to make changes to the repository
+config file.
+
+Each consequtive level has a higher precedence over the previous level.
+The level of precedence is 3 > 2 > 1 where level 3 has a higher precedence to
+being used over level 2 and level 2 has a higher precedence over level 1.
+
+On the Windows system:
+1) System config file: The equivalent of /etc/config in Windows is located in
+"C:\Documents and Settings\All Users\Application Data\Git\config" (Windows XP)or
+"C:\ProgramData\Git\config" (Windows Vista and later).
+2) User config file: The equivalent of .gitconfig or .config/git/config is located in
+the user home directory, usually C:\Users\$USER.
+3) The repository config file: Located as the same as the Unix environment. .git/config
+inside the repository directory.
+
+
+Specify a username to use with git in the system:
+$ git config --global user.name "Username"
+
+Specify an email address to use with git in the system:
+$ git config --global user.email username@domainName.domainSuffix
+
+Choosing a text editor for git messages in an Unix environment:
+$ git config --global core.editor vim
+$ git config --global core.editor nano
+
+
+Choosing Notepad++ as default text editor in Windows.
+1) Using a 32-bit editor in a 32-bit system or 64-bit editor in a 64-bit system:
+$ git config --global core.editor "'C:/Program Files/Notepad++/notepad++.exe' -multiInst -nosession"
+2) Using a 32-bit editor in a 64-bit system:
+$ git config --global core.editor "'C:/Program Files(x86)/Notepad++/notepad++.exe' -multiInst -nosession"
+
+List out the config file variables
+$ git config --list
+
+Some of the output from the configuration listing will be shown more than once. Git reads
+the same values from the three available config files. In such cases, git uses the last
+value it reads from the three config files when making commits. The value used still
+follows the order of precedence.
+
+
+Gettings help for commands:
+$ git help <verb>
+$ man git-<verb>
+Verb here being the git actions. Ex. "git config", config here being the verb.
+
+Examples:
+Help of git action "config":
+$ git help config
+$ man git-config
+
+Both the above commands open the manual page (manpage) for the git actions. Usually the
+complete manual pages aren't necessary. Simply using the "--help" or "-h" switch with the
+command would display shorter details of the command actions.
+$ git config -h
+$ git config --help (In the Windows system, the manpage is still opened)
+
+
+<<<<	PART 2	>>>>
+Working with repositories
+
+Initializing a repository:
+A project not under version control by git first needs to be initialized. The git bash
+needs to be opened in the directory of the project and the following command needs to be
+executed:
+$ git init
+The above command creates a directory ".git" in the project directory. It contains the
+necessary files required for the Version Control System (VCS) to create a repository.
+Otherwise known as a repository skeleton. This directory contains nothing of the project
+files, for the time being. For git to start keeping track of changes, file tracking needs
+and an initial commit needs to be done. This can be accomplished using the following
+commands:
+$ git add
+$ git commit
+
+Examples:
+Adding a file to the repository.
+$ git add *.txt
+The command will add all text files inside the current directory to be tracked.
+$ git commit -m 'Initial project version'
+Will commit the files into the repository with the details of the commit using the "-m"
+switch and the string inside the quotes after the switch is the message.
+
+
+Cloning an existing repository:
+If there is a repository that already exist, there is no need to initialize a directory.
+The "git clone" command can be used to obtain the copy of the repository. Git receives
+the full copy almost all the data the server holds. Every version of the files, the history
+of the project is copied when the clone command is run.
+Example:
+$ git clone https://github.com/libgit2/libgit2
+This command will create a directory with the name libgit2, initialize a .git directory and
+receive all the data for the repository.
+But if the repository is to be stored in a directory that already exists, the following
+command can be run instead:
+$ get clone https://github.com/libgit2/libgit2 myfolder
+This will clone and store the repository data inside the directory called "myfolder".
+
+Git uses multiple protocols for cloning repositories. The preceding examples used the
+https:// protocol. There are also the git:// and user@server:path/to/repo.git which uses
+the SSH transfer protocol.
+
+
+Recording changes to the repository:
+The files in a git repository are in two states known as tracked or untracked.
+Tracked files are files that were in the last snapshot. These can be unmodified, modified
+or staged files. These are the files which are already in the repository and that git
+knows about.
+Untracked files are other files that were not in the last snapshot and are not in the
+staged by git.
+After cloning a repository, all the files will be tracked and modified. If there are files
+already in there. When the files are edited, they are modified. Because it is changed
+since the last commit. As working with git, the modified files are selected for the staging
+area and then commit the staged changes. This cycle repeats all the time.
+
+Checking the status of files:
+The command used to check the status of files is:
+$ git status
+Running this command will list the untracked, modified and files that are staged or if
+there are non of the specified specified, it will notify that the directory is clean.
+
+When checked with no files changes made:
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit, working directory clean
+
+The command also tells which branch you're on and that it has not diverged from the same
+branch on the server.
+When a file is added, lets name it gitCommands.txt (this file), running the status command
+will display:
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+    gitCommands.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+
+The readme.txt file is untracked because it's under the "Untracked files" heading in the
+status output. Untracked files are files that were not present in the last commit of the
+repository. Git will not include it in further commits until specified to do. This is so
+that files that are not neede to be included are not added into the commits. Although there
+are methods of telling Git to ignore certain file types or files with a certain name
+pattern.
+
+Tracking new files:
+To track new files, the "git add" command is used.
+Adding the gitCommands.txt file:
+$ git add gitCommands.txt
+Now running the status command again:
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:	gitCommands.txt
+
+The new file gitCommands.txt is staged because it's under the "Changes to be committed"
+heading. If committed, the version of the file when the git add was run is what will be
+added into the project history.
+The "git add" command takes a path name for either a file or a directory, if it's a
+directory, the command adds all the files in the specified directory.
+
+Staging Modified files:
+After making changes to the current file, which is tracked, running the "git status" will
+result in the output as:
+$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        new file:   gitCommands.txt
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   gitCommands.txt
+The gitCommands.txt file appears under the "Changes to be committed" and "Changes not
+staged for commit" headings. The second heading are for files that are tracked that has
+been modified in the working directory but has not been staged for commit, although I
+haven't really committed the file to the repository yet. To stage it, "git add" is used.
+The add command is a multipurpose command, it is used for adding new files, to stage files
+and other things like marking merge-conflicted files as resolved. Easier understood to
+think of it as the command to add to the next commit.
+Running git add to the changed file:
+$ git add gitCommands.txt
+$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        new file:   gitCommands.txt
+There is only the one file under the "Changes to be committed" heading. There was just the
+one file that was added to the stage and then further modified, so there will only be one
+file name displayed when staged again. If it were a different file that was modified and
+then staged, there would be two file names under the "Changes to be committed" heading. It
+would look something like this:
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        new file:   gitCommands.txt
+		modified:	index.html
+
+In this example, the second file was named index.html assuming the index.html file already
+was a part of the previous commits. If it itself was a new file, instead of "modified", it
+would be categorized as "new file" just like the gitCommands.txt file. I still have not
+committed it to the repository. Guess I'll just do it now. :P
+
+Short status:
+The "git status" command contains too many words! Use the short form:
+$ git status -s
+$ git status -short
+Not exactly a short command -_- :P
+Running the command displays:
+$ git status -s
+AM gitCommands.txt
+The two letters "AM" indicate the status of the file. Each letter is actually a column.
+In this example, the left column contains the letter "A" and the right column contains the
+letter "M". The A indicates that new files have been added to the staging area. The letter
+"M" indicates the file has been modified. The left column tells the status of the staging
+area and the right column tells the status of the files in the working directory.

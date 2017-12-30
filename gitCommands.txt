@@ -246,3 +246,7 @@ In this example, the left column contains the letter "A" and the right column co
 letter "M". The A indicates that new files have been added to the staging area. The letter
 "M" indicates the file has been modified. The left column tells the status of the staging
 area and the right column tells the status of the files in the working directory.
+
+An M in the left column would mean a tracked file has been modified?
+Yep. Modified tracked file.
+

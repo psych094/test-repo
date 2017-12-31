@@ -369,3 +369,94 @@ vimdiff or others, including commercial ones. Running "git difftool --tool-help"
 display what is available in the current system.
 
 Committing your changes (What have I been doing then?):
+After getting your staging area set as desired. Comes the time to commit the changes. Any
+file that is created or further editted will not be committed unless added to the staging
+area, Git will see it as modified files. Remember to "git add" the file. The simplest
+command to commit the changes is:
+$ git commit
+Running the command will open the system default text editor or the preferred on installed
+with Git when installing for Windows.
+The choice of editor can be changed using the "git config --global" command.
+When the editor opens, the default commit message consists of an empty line, the first
+line, and the output of the "git status" command commented out. In the first line, here is
+where the commit message needs to be typed in. Type in a message about what the commit is
+about. The "git status" output can be uncommented to add extra details about the files in
+the commit. Furthermore, for an explicit reminder, the commit command can be passed with
+the "-v" option to also include the "git diff" output, displaying the differences in the
+new files, to be commited. This information by default is not commented out. I just ran the 
+command and editted the "git diff" output to only display the first two lines and the
+differences. Just realized instead of having to go through the trouble of deletion of other
+details, I could have just commented them out. Ugh!
+The command with the diff output in the commit message:
+$ git commit -v
+When writing small commit messages, alternatively, the "-m" flag can be used to include the
+message within the commit command, as follows:
+$ git commit -m "Commit message here"
+This is good for small commit messages that don't require much details. Such as, addition
+of a new file or a spelling mistake in comment or code.
+
+After committing, there will be an output on the screen. It tells which branch the commit
+has been added to, the SHA-1 checksum of the commit, how many files were changed and
+how many lines were added or removed. Committing files adds the data and changes to the
+history of the project as a snapshot. It creates a snapshot everytime there is a commit.
+This snapshot can be used to revert changes made or to compare for later use.
+
+Skipping the staging area (Immediately commmit changes):
+Although the staging area is useful for committing specific files. Sometimes when needing
+to commit every file in the working directory, the commit command has an option/flag for
+that specific task:
+$ git commit -a
+Simply adding the "-a" flag adds all files in the working directory to the commit.
+
+Removing files:
+To remove a file from Git, it has to be removed from the list of tracked files. More
+precisely, it has to be removed from the staging area and then committed. The "git rm"
+command does that and also removes the file from the working directory so that Git doesn't
+see it as an untracked file. Simply deleting the file will cause it to be shown in the
+"Changes not staged for commit" area , basically Git sees it as an unstaged file. Although
+it's actually not there. To remove a file from the repository and the working directory
+tree, the command needs to be:
+$ git rm <file>
+This command also stages the deletion of the file for the commit.
+If a file that has been modified and staged, the "git rm" command will also have to be used
+with the "-f" option. This is suppose to be a safety feature to prevent the deletion of
+data that hasn't been saved in a snapshot of the repository.
+Another useful thing is to keep the files stored in the computer but to remove the files
+from the staging area. Useful if a file that has not been added into the ".gitignore" file
+and has been staged for the next commit. The command is:
+$ git rm --cached <file>
+Files, directories and file-glob patterns can be passed to "git rm".
+For example:
+$ git rm log/\*.log
+To remove all .log files inside the log/ directory from the staging area. The backslash (\)
+before the asterisk (*) was needed since Git does it's own filename expansion in addition
+to the shell's filename expansion.
+If there is the need to remove files in the current working directory:
+$ git rm \*~
+This will remove any file ending with a tilde (~).
+
+NOTE: If the shells expansion is passed into the "git rm" command, the "git rm" command
+would be receiving the entire list of files when the shell's filename expansion is used.
+It would be like running the "git rm" command as:
+$ git rm <file1> <file2> <file3> <file4> <file5> ... etc
+So yeah. The backslash is needed to let Git do it's own thing when it's capable of.
+
+
+Moving files:
+Unlike other VCS systems, Git doesn't explicitly track file movement. If a file is renamed
+in Git, there is no metadata stored inside Git that the file has been renamed.
+Git has a "git mv" command to move or rename a file:
+$ git mv <from_somewhere> <to_somewhere>
+It works as it should. Running the "git status" command displays that the file has been
+renamed and it's been staged.
+It is also the same as running:
+$ mv <from_somewhere> <to_somewhere>
+$ git rm <from_somewhere>
+$ git add <to_somewhere>
+Here in the second and third command, <from_somewhere> and <to_somewhere> being the names
+of the files used in the first command. Running these three commands have the same effect
+as running the "git mv". The convenience being, only on command is needed when using the
+command available in Git.
+
+
+Viewing the commit history:

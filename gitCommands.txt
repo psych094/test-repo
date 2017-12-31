@@ -291,3 +291,18 @@ understand.)
 Tip: GComprehensive list of .gitignore available in GitHub at
 https://github.com/github/gitignore. Gotta have a look.
 
+Viewing staged and unstaged changes:
+Using the "git status" only displays what files are untracked, modified and staged. It does
+not display the differences between the modified files and the committed files. Simply
+running the following command will display the changes made:
+$ git diff
+
+What "git diff" shows:
+1) Modified files not yet staged.
+2) Staged files not yet committed.
+"git status" displays the files whereas "git diff" displays the exact lines that have been
+changed.
+
+Any changes made to a file and HAS NOT been staged, a difference will be shown between the
+modified file and the last committed version of the file.
+

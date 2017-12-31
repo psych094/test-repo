@@ -354,8 +354,8 @@ with the press of the 'Enter' key.
 The output is pretty much the same with the exception in this example, there is a deletion
 in this difference.
 
-Note: git diff doesn't show all changes made since ast commit. Only the unstaged changes. I
-did run the git diff after staging (while I still didn't understand the diff command),
+Note: git diff doesn't show all changes made since last commit. Only the unstaged changes.
+I did run the git diff after staging (while I still didn't understand the diff command),
 that explains it.
 If a file that has been modified and staged, then further modified. "git diff" will display
 the changes between the staged and unstaged modified files.

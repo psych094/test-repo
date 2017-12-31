@@ -306,3 +306,66 @@ changed.
 Any changes made to a file and HAS NOT been staged, a difference will be shown between the
 modified file and the last committed version of the file.
 
+Using this file gitCommands.txt, let's see the changes made from the last commit and the
+last time I saved the file:
+$ git diff
+diff --git a/gitCommands.txt b/gitCommands.txt
+index bbb37ac..a733543 100644
+--- a/gitCommands.txt
++++ b/gitCommands.txt
+@@ -291,3 +291,15 @@ understand.)
+ Tip: GComprehensive list of .gitignore available in GitHub at
+ https://github.com/github/gitignore. Gotta have a look.
+
++Viewing staged and unstaged changes:
++Using the "git status" only displays what files are untracked, modified and staged. It does
++not display the differences between the modified files and the committed files. Simply
++running the following command will display the changes made:
++$ git diff
++
++What "git diff" shows:
++1) Modified files not yet staged.
++2) Staged files not yet committed.
++"git status" displays the files whereas "git diff" displays the exact lines that have been
+
+
+This is the output of the difference between the unstaged modified file and my last commit
+file. The "+" sign indicates new lines and a "-" would indicate deletions. There are an
+addition of 10 lines.
+Simply "git diff" will display differences between the unstaged modified files and the last
+committed files. To see the differences between the files that have been staged for the
+next commit, the following command will need to be run:
+$ git diff --staged
+The output of the command should be the same as the normal "git diff" command. Gotta make
+a todo file to add an example here for this situation.
+Alright. Got an example going using the todo file instead. Here it is:
+$ git diff --staged
+diff --git a/todo b/todo
+index b007070..f14b37f 100644
+--- a/todo
++++ b/todo
+@@ -1 +1 @@
+-git diff --staged example
+\ No newline at end of file
++Add in an example for the git diff --staged command.
+
+The \ No newline at end of file was because the file was just one line that didn't end
+with the press of the 'Enter' key.
+The output is pretty much the same with the exception in this example, there is a deletion
+in this difference.
+
+Note: git diff doesn't show all changes made since ast commit. Only the unstaged changes. I
+did run the git diff after staging (while I still didn't understand the diff command),
+that explains it.
+If a file that has been modified and staged, then further modified. "git diff" will display
+the changes between the staged and unstaged modified files.
+Another form of the "git diff --staged" command is:
+$ git diff --cached
+--cached and --staged display the same output. That is to display the staged modified file
+differences.
+Note: "git diff" will be used in various ways. Grahical or external diff viewing programs
+are available to use. Running "git difftool" will display the diffs in software like emerge,
+vimdiff or others, including commercial ones. Running "git difftool --tool-help" will
+display what is available in the current system.
+
+Committing your changes (What have I been doing then?):

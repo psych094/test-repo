@@ -288,3 +288,6 @@ Glob patterns: Simplified regular expressions (Ugh!) that shells (Yay!) use.
 a/**/z would match a file named z in any sub-directory inside a. (Okay. This was easy to
 understand.)
 
+Tip: GComprehensive list of .gitignore available in GitHub at
+https://github.com/github/gitignore. Gotta have a look.
+

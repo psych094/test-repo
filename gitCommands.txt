@@ -1,3 +1,4 @@
+Book: Pro Git
 <<<<	PART 1    >>>>
 Initial setup when running git:
 

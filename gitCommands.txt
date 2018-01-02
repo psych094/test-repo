@@ -42,9 +42,11 @@ $ git config --global core.editor nano
 
 Choosing Notepad++ as default text editor in Windows.
 1) Using a 32-bit editor in a 32-bit system or 64-bit editor in a 64-bit system:
-$ git config --global core.editor "'C:/Program Files/Notepad++/notepad++.exe' -multiInst -nosession"
+$ git config --global core.editor "'C:/Program Files/Notepad++/notepad++.exe' \
+-multiInst -nosession"
 2) Using a 32-bit editor in a 64-bit system:
-$ git config --global core.editor "'C:/Program Files(x86)/Notepad++/notepad++.exe' -multiInst -nosession"
+$ git config --global core.editor "'C:/Program Files(x86)/Notepad++/notepad++.exe' \
+-multiInst -nosession"
 
 List out the config file variables
 $ git config --list
@@ -461,3 +463,155 @@ command available in Git.
 
 
 Viewing the commit history:
+To look back to see what has happened with the repository. The most basic tool for doing
+this is:
+$ git log
+By default, the output are all the commits starting with the recent to the first commit
+messages. The output contains the SHA-1 checksum, author's name and email, the date written
+and the commit message.
+Many options are available with the log command to display the repository logs in various
+ways.
+Some of the most popular ones covered in the book.
+$ git log -p
+$ git log --patch
+Displays the changes made in each commit.
+
+$ git log -3
+"3" here being the number of the logs to display of command output.
+
+$ git log --stat
+Displays the a brief information about the changes of the commits.
+
+$ git log --pretty=oneline
+Prints the output in one line.
+
+$ git log --pretty=short
+$ git log --pretty=full
+$ git log --pretty=fuller
+Displays almost the same out as the "--pretty=oneline" with less or more info.
+
+$ git log --pretty=format:"%h - %an, %ar : %s"
+Displays the log output in a specific format since the predefined formats could change with
+and update to Git.
+Options for the format options, such as the "%h" and others, are:
+|---------------------------------------------------------|
+|                     format options                      |
+|----------|----------------------------------------------|
+|  Option  | Description of Output                        |
+|    %H    | Commit hash                                  |
+|    %h    | Abbreviated commit hash                      |
+|    %T    | Tree hash                                    |
+|    %t    | Abbreviated tree hash                        |
+|    %P    | Parent hashes                                |
+|    %p    | Abbreviated parent hashes                    |
+|   %an    | Author name                                  |
+|   %ae    | Author email                                 |
+|   %ad    | Author date (for of date uses --date=option) |
+|   %ar    | Author date, relative                        |
+|   %cn    | Comitter name                                |
+|   %ce    | Comitter email                               |
+|   %cd    | Comitter date                                |
+|   %cr    | Comitter date, relative                      |
+|    %s    | Subject                                      |
+|----------|----------------------------------------------|
+
+Difference between author and committer:
+Author is the person who wrote the work. The committer is the person who committed the work.
+If a contributer sends a patch to a work and the developer applies the patch to the
+repository, both the contributer and the developer get the credit. To be further covered in
+another section labeled "Distributed Git".
+"oneline" and "format" options are useful with the "--graph" option. Output is an ASCII
+graph that displays the branch and merge history.
+The output will become interesting (really now?) in the next chapter when going through
+branching and merging (I'll take your word for it).
+
+These were only simple output-formatting to "git log" (Seriously? -_- ). And there's more?
+There's always more than meets the eye, huh? Common options of "git log" lists the options
+covered so far (What about the other options?). Oh, as well as other common formatting
+options that may be useful (May be?) that change the output of the log command.
+|-------------------------------------------------------------------------------------------|
+|                                      Common options                                       |
+|------------------|------------------------------------------------------------------------|
+|      Option      |                               Description                              |
+|------------------|------------------------------------------------------------------------|
+|        -p        | Show the patch introduced with each commit.                            |
+|     --stat       | Show statistics for files modified in each commit.                     |
+|   --shortstat    | Display only the changed/insertions/deletions line from the --stat     |
+|                  | command.                                                               |
+|   --name-only    | Show the list of files modified after the commit information.          |
+|  --name-status   | Show the list of files affected with the added/modified/deleted        |
+|                  | information as well.                                                   |
+| --abbrev-commit  | Show only the first few characters of the SHA-1 checksum instead of    |
+|                  | all 40.                                                                |
+| --relative-date  | Display the date in a relative format (for example, "2 weeks ago")     |
+|                  | instead of using the full date format.                                 |
+|    --graph       | Display an ASCII graph of the branch and merge history beside the      |
+|                  | log output.                                                            |
+|    --pretty      | Show commits in an alternative format. Options include oneline, short, |
+|                  | full, fuller, and format (Where you specify your own format).          |
+|    --oneline     | Shorthand for --pretty=oneline abbrev-commit used together.            |
+|------------------|------------------------------------------------------------------------|
+
+
+Limiting log output:
+There is output-formatting, as already done. There is also log output limiting. Okay.
+"git log" takes a number of useful limiting options that only displays a subset of commits.
+One option already done is the -<n> option. The <n> is an integer. There are more options.
+Time-limiting options such as "--since" and "--until" are useful. For example:
+$ git log --since=2.weeks
+Displays the commits made in the last two weeks. This works with lots of formatting.
+Date format can be specified like "2008-01-15" or a relative date such as "2 years 1 day
+3 minutes ago" (Okay. Cool, cool).
+The commits can also be filtered to match some criteria. The "--author" option allows you
+to filter on a specific author and the "--grep" option lets you search for keywords in the
+commit messages.
+Note: More than one instance can be specified, like using both the "--author" and "--grep"
+search criteria which will limit the commit outputs to commits that match any of the
+"--author" patterns and the "--grep" patterns (I wonder other criteria are there, just using
+these two when explaining the concept -_- ). However, adding the "--all-match" option limits
+the output to the commits that match the "--grep" patterns.
+Oh, look! There is a table coming up! Yay -_-
+
+Another "really" helpful filter (I get it now, they're all helpful) is the "-S" option,
+casually referred as Git's "pickaxe" option. Okay. Whatever. It takes a string and shows
+only the commits that changed the number of occurrences of that string. How the fuck am I
+suppose to paraphrase that -_- What the fuck is that even suppose to mean?!
+Goody. There is an example:
+$ git log -S function_name
+If you wanted to find the last commit that added or removed a reference to a specific
+function. Still got no clue on how that works...
+Hmm. Probably looks at the filename or the file diffs? Whatever.
+
+The last really useful option (Now comes the last?) as a filter is to use the path. If
+specified a directory or file name, the log outputs are limited to only those files in the
+commits. Always is the last option and is preceded with a double dash (--) to separate the
+paths from the options.
+|------------------------------------------------------------------------------------------|
+|                                   Output Limit Options                                   |
+|------------------------------------------------------------------------------------------|
+|      Option       | Description                                                          |
+|-------------------|----------------------------------------------------------------------|
+|       -<n>        | Show only the last n commits.                                        |
+| --since, --after  | Limit the commits to those made after the specified date.            |
+| --until, --before | Limit the commits to those made before the specified date.           |
+|      --author     | Only show commits on which the author entry matches the specified    |
+|                   | string.                                                              |
+|   --committer     | Only show commits in which the committer entry matches the specified |
+|                   | string.                                                              |
+|      --grep       | Only show commits with a commit message containing the string.       |
+|        -S         | Only show commits adding or removing code matching the string.       |
+|-------------------|----------------------------------------------------------------------|
+
+Example (Useful since it contains the path thing):
+$ git log --pretty="%h - %s" --author-gitster --since="2008-10-01" --before="2008-11-01" \
+--no-merges -- t/
+Output from some repository from the book examples.
+Whatever. From almost 40,000 commits, there were just 6 lines of output.
+
+Tip: Preventing the display of merge commits. Depending on the workflow in the repository,
+it's possible that that a sizable percentage of the commits in your history are just merge
+commits which typically aren't very informative. To prevent the display of merge commits
+cluttering up your log history, simply add the log option "--no-merge".
+
+
+Undoing things:

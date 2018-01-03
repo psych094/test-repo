@@ -615,3 +615,269 @@ cluttering up your log history, simply add the log option "--no-merge".
 
 
 Undoing things:
+Undoing things are useful. Done.
+Not all undos can be undone. Okay.
+This is one of the one little things that can be done in Git where data can be lost if not done
+correctly. Ironic, huh?
+One of common undos done when a commit is done too early, a file hasn't been added to the
+staging area. or an error in the commit message. To redo the commit, make the changes,
+stage them and commit again, the following is needed:
+$git commit --amend
+This command takes the staging area and uses it for the commit. If no changes were made and
+this command was run, the Git snapshot will be the same and the only thing that'll change
+is the commit message. The same commit message editor opens with the commit old message
+already there. This message can be editted the same as a normal commit message and will
+overwrite the previous commit message.
+Example:
+$ git commit -m "some message"
+$ git add <file>
+$ git commit --amend
+Committing a change then adding the changes of the <file> to the commit that has already
+been made.
+Note: Amending commits replace the previous commit, not actually fixing it. Reason so, the
+commit history isn't cluttered with messages about forgotten files or typo fixes.
+
+Unstaging a staged file:
+Making changes to two files and wanting to commit them to two separate commits. But both
+the files have been added to the staging area.
+The status command gives the command needed to unstage files:
+$ git reset HEAD <file>...
+The command will unstage the file for the next commit and move it to the unstaged area. The
+changes are still there in the files in the working directory.
+"git reset" command can be dangerous, especially if the "--hard" flag is run with it. (What
+does it do?). Oh, that's all needed to know for now? Later in "Reset Demystified" chapter.
+
+Unmodifying a modified file:
+Reverting file back to how it was at the last commit or when the repository was cloned. The
+status command also displays the command needed to do that:
+$ git checkout -- <file>...
+This discards the changes made to the file in the working directory.
+Important: "git checkout -- <file> is a dangerous command. All changes made are gone because
+Git just copied the last commit version over that file. Only use it when sure you don't want
+to keep the changes.
+If wanting to keep the changes but not have it now, stashing and branching will do it. Will
+be covered in "Git Branching" chapter.
+Anything committed in Git can almost always be recovered. Even commits that were on branches
+that were deleted or commits that were overwritten with "--amend" can also be recovered. To
+be covered in "Data Recovery" section. Anything not committed lost is never to be seen again.
+
+
+Working with remotes (Finally!):
+To collaborate in a Git project, managing remote repositories is a must. Remote repositories
+are versions of the project that are hosted on the internet or local network. There can be
+several remote repositories, either read-only or read/write. Collaborating with others
+requires managing remote repositories and pushing and pulling data to anf from them when
+work needs to be shared. Managing requires the knowledge to add/remove repositories, managing
+vmultiple remote branches and define them as being tracked or untracked and a whole lot more.
+Some of the remote-management skills will be coverd. Goody, I wonder if there is a reference
+about all the commands and descriptions.
+Note: Remote can also be another repository within the same computer in a different location.
+Pushing and pulling changes still requires to be run if another directory was created to
+clone the repository.
+
+Showing remotes:
+To see the configured remote servers:
+$ git remote
+It lists the shortnames of each remote servers. If the repository has been cloned, there
+should at least be an origin, the default name given by Git to the server clones from.
+
+$ git remote -v
+It also shows thr URLs that Git has stored for the shortname to be used when reading and
+writing to that server. The shortname is just a name for the remote server URL.
+If there are more than one remote server, the command will list all the remote servers. This
+allows the data to be pulled from any of these servers. Additionally, we could push to one
+or more of the servers. Although it's not possible to tell with the "-v" option.
+
+Adding remote repositories:
+The clone command adds an origin remote on it's own. Remote repositories can also be added
+manually:
+$ git remote add <shortname> <url>
+Now this will allow the shortname string to be used on the command line without the need for
+typing in the entire URL. For example, to pull in data in the added remote repo but isn't
+in the origin remote, which also means it isn't in your repo, the command can be used to
+fetch that data:
+$ git fetch <shortname>
+A directory under the name of the remote shortname will be created and the master branch
+data will be stored in a directory matching the name of the branch. The data can be merged
+with your branches or checkout a local branch at the point to examine the data.
+Again, "Git Branching" to cover up the branching stuff later.
+
+Fetching and pulling from your remotes:
+The fetch command pulls down data that isn't in the local repository and from the remote
+project. After this is done, the references to all the branches from that remote will be
+stored locally which can be used to merge or examine the changes at any time.
+A cloned repository is automatically added under the name origin, so this also works:
+$ got fetch origin
+This fetches new changes that has been pushed to that server since clones (or fetched). The
+fetch command, the difference with what it does with the data it receives, is that it only
+saves it locally to the computer, it does not merge the data though or modify what you're
+working on. The merging will have to be manually.
+If your current branch is up to track a remote branch (And a reference to Git Branching and
+the next section, Why didn't they cover Git Branching already?!), "git pull" command can be
+used to automatically fetch and then merge that remote branch into your current branch (I
+already about the pull command -_- ). This may be an easier or more comfortable (I think
+both) workflow. By default, the "git clone" automatically sets up the local master branch
+to track the remote master branch or what the default branch may be called from the server
+it was cloned from. Usually master and no one changes that. "git pull" fetches data from
+the server cloned from and merges the changes from the with the ones you're working on.
+
+Pushing to your remotes:
+When there is a project at a time that you want shared, it has to be pushed upstream. There
+is a simple command for that:
+$ git push <remote_shortname> <branch>
+To push the changes from the master branch to the origin server:
+$ git push origin master
+Git's cloning already set the name of remote and branch. This can be run to push any commits
+you've done to the server.
+This command nly works with servers where the contributors and write access to and if nobody
+has pushed in the meantime (What? If no one pushed. Oh right. Gotta pull and merge conflicts
+first). Their work will have to be fetched and incorporated with your work before you're
+allowed to push your changes. (Another reference for "Git Branching", this time on how to
+push to remote server? This section is about pushing to remote servers -_- )
+
+Inspecting a remote:
+Se too information about a particular remote:
+$ git remote show <remote>
+It lists the URL of the remote server and the tracking branch information. it also tells
+that if you're in the master branch, the "git pull" command will automatically merge in the
+master branch on the remote server after it fetches all the remote references. it will also
+list the remote references it pulls down.
+In the real world, there would be much more information from the "git remote show" command.
+It would display which branch is automatically push to when the "git push" command is run
+while on certain branches. It also displays which remote branches on the server that isn't
+in the local repository clone and the branches in the clone that has been removed from the
+server, the multiple local branches that are able to merge automatically with their
+remote-tracking branch when you run "git pull".
+
+Renaming and removing remotes:
+The command used to rename remotes' shortnames:
+$ git remote rename <current_shortname> <new_shortname>
+This command also changes all the remote-tracking branch names, too. The local directory
+created under the name of the previous shortname will then be renamed to the new shortname.
+
+To remove a remote for any reason, whether the server is in another place or a particular
+mirror is no longer being used, or a contributor isn't contributing anymore, the command
+that can be used is:
+$ git remote remove
+$ git remote rm
+Once the remote is deleted, all remote-tracking branches and configuration settings
+associated with that remote are also deleted. Say bye-bye to the downloaded directory.
+
+
+Tagging:
+Tags are typically used for marking release points. This section is about learning how to
+list tags, how to create tags and what the different types of tags are.
+
+Listing your tags:
+$ git tag
+Listing the tags in Git is easy. Simply typing "git tag" is enough since the "-l" and
+"--list" options are optional. The output is in alphabetical order, though.
+
+$ git tag -l "v1.8.5*"
+Search for tags with a specific pattern. Listing tag with wildcards, the optional "-l" or
+"--list" turns into something that is mandatory.
+
+Creating tags:
+There are two types of tags:
+1) lightweight
+2) annotated
+A lightweight tag is like a branch that doesn't change. It's just a pointer that leads to a
+specific commit.
+Annotated tags are stored as full objects in the Git database, they're complete files. Those
+files are checksummed, contain the tagger name, email and date and a tagging message. And
+can be signed and verified with GNU Privacy Guard (GPG). It's recommended that you create
+annotated tags so you can have all this information. But a temporary tag, or for some other
+reason don't want to keep the other information, lightweight tags get the job done.
+
+Annotated tags:
+Creating annotated tags are simple:
+$ git tag -a <tag_name> -m "tag message"
+Simply adding the "-a" option creates an annotated tag. The "-m" specifies a tagging message
+which is stored with the tag. If a message is not specified, just like the commit, a message
+will have to be typed in later.
+The tag data can be seen along with the commit that was tagged by using "git show <tag_name".
+The "git show" command shows the tagger information, the date the commit was tagged and the
+annotation message before showing the commit information.
+
+Lightweight tags:
+Another way to tag commits is using lightweight tags. This is the commit checksum stored in
+a file where no other information is kept. To create a lightweight tag:
+$ git tag <tag_name>
+No "-a" or "-s" or "-m" options are needed, only the tag name is required. Running the "git
+show <tag_name>" command, it only displays the commit with the tag and no other information.
+
+Tagging later:
+Commits can still be tagged even after moving past them through other commits.
+To tag a specific commit, first run:
+$ git log --pretty=oneline
+And find the commit you want to tag. After doing to, copy the checksum or part of it and
+run:
+$ git tag -a <tag_name> <checksum>
+At least 6 characters of the checksum is required? (Gotta add that to the todo file).
+Running the "git tag" or the "git show <tag_name>" command will display the new tag.
+
+Sharing tags:
+By default, the "git push" command doesn't transfer tags to the remote servers. It will
+have to be done manually to a shared server after creating them (Shared server? o.O ). This
+process is just like sharing a remote branch ("git push <remote_shortname> <branch>"), which
+can be done by running:
+$ git push origin <tag_name>
+If there are a lot of tags that need to get pushed all at once, the "--tags" option is
+needed to run with the "git push" command:
+$ git push origin --tags
+This will allow other people who clones or pulls from your repository to also get your tags.
+
+Checking out tags:
+If you want to view the version of files a tag is pointing to, do a Git checkout, though
+this will put the repository in a "detached HEAD" state (Whatever that means...), and it
+will have some ill (Unwanted functioning of Git) side effects:
+$ git checkout <tag_name>
+In a detached HEAD state, any changes and commits made, will not change the tag but the new
+commit will won't belong to any branch and will be unreachable except for the exact commit
+hash. So, if making changes, for example, fixing a bug in an older version, a branch would
+need to be created:
+$ git checkout -b <branch_name> <tag_name>
+Doing this and then committing, the <branch_name> will be slightly different where the
+difference will be the changes committed and will move forward with the new changes.
+Be careful? I don't get it. Gotta try this version thing with the libgit2 repository and
+see what happens. Adding to todo now.
+
+
+Git aliases:
+Basic Git almost done. Finally. Now I can start with learning JavaScript and Python
+and only keep moving on with this when I need a break from the other two things. Okay,
+chit-chat aside.
+Before finishing the chapter, one thing can help make the Git experience simpler, easier and
+more familiar: aliases. Aliases won't referred to or assumed you've used them later, but
+probably a good idea to know how to use them. Aliases sounds like it'll do the same thing as
+the Unix terminal command "alias". Probably is.
+Git doesn't automatically infer your command if typed in partially. If the entire text is
+tedious to type, aliases can easily be set up for each command using "git config". Here are
+a couple of examples:
+$ git config --global alias.co checkout
+$ git config --global alias.br branch
+$ git config --global alias.ci commit
+$ git config --global alias.st status
+This means that instaed of typing "git commit" to commit, simply typing "git ci" will work.
+As time goes on using Git, other commands are bound to be used frequently as well. Create
+new aliases.
+This technique can be very useful in creating commands that, as a user, think shoud exist.
+Example, correcting usability problem encountered with unstaging a file, your own alias can
+be made to Git:
+$ git config --global alias.unstage 'reset HEAD --'
+This make the next two commands perform the same job:
+$ git unstage <file>
+$ git reset HEAD -- <file>
+This seems clearer. It's also common to add a last command:
+$ git config --global alias.last 'log -1 HEAD'
+This way, it's easy to see the last commit message.
+As it should be easy to tell, Git simply replaces the new command with whatever you alias it
+for. However, if an external command is what you want to run, rather a Git command, the
+command needs to start with an "!" character. This is useful when writing your own tools
+that work with a Git repository. Demonstration running "gitk" using an alias:
+$ git config --global alias.visual '!gitk'
+
+Finally!!! Time for the "Git Branching"!!
+
+
+<<<<	PART 3	>>>>

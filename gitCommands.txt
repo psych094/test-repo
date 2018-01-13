@@ -729,14 +729,14 @@ To push the changes from the master branch to the origin server:
 $ git push origin master
 Git's cloning already set the name of remote and branch. This can be run to push any commits
 you've done to the server.
-This command nly works with servers where the contributors and write access to and if nobody
+This command only works with servers where the contributors and write access to and if nobody
 has pushed in the meantime (What? If no one pushed. Oh right. Gotta pull and merge conflicts
 first). Their work will have to be fetched and incorporated with your work before you're
 allowed to push your changes. (Another reference for "Git Branching", this time on how to
 push to remote server? This section is about pushing to remote servers -_- )
 
 Inspecting a remote:
-Se too information about a particular remote:
+To see information about a particular remote:
 $ git remote show <remote>
 It lists the URL of the remote server and the tracking branch information. it also tells
 that if you're in the master branch, the "git pull" command will automatically merge in the
@@ -881,3 +881,327 @@ Finally!!! Time for the "Git Branching"!!
 
 
 <<<<	PART 3	>>>>
+Git Branching
+Nearly every VCSs has branching support. Branching is to diverge from the main line of
+development and continue to work without making changes to the main line. Many VCS tools,
+this is an expensive process, often making copies of the source code directory which could
+take a long time for large projects.
+Git's branching is sometimes referred as the "killer feature" and that it makes Git unique
+as compared to VCSs. The way Git branches is lightweight, making branching almost
+instantaneous, and switching between the main branch and new branch just as fast. Unlike
+other VCSs, Git encourages workflows that branch and merge often. Understanding and
+mastering this feature changes how software development is done.
+
+Branches in a nutshell:
+To understand how Git branching works, examining how the data stored needs to be understood.
+As mentioned in previous chapters, Git doesn't store the changes or differences of files
+but as snapshots of files.
+When a commit is made, Git stores the commit object which has the pointer to the snapshot
+of the staged files. it also holds the author's name and emial, the commit message and
+pointer to the commit or commits that came before the last commit (parent or parents). The
+first commit has zero parents, each normal commit has one parent and merge of branches have
+multiple parent commits.
+
+Book example:
+Let there be a project with three files, staged and committed. Staging the files calculates
+the SHA-1 checksum for each file and stores the version of the file in the Git repository,
+it is referred to as blobs and adds the checksum to the staging area.
+$ git add README test.rb LICENSE
+$ git commit -m 'The initial commit of my project'
+When commit is run, Git checksums each subdirectory (in this case, root project directory)
+and stores those tree objects in the repository. Git then creates a commit object that
+has the metadata and a pointer to the root project tree so it can re-create that snapshot
+when needed.
+The Git repository now contains five objects, one blob for the contents of each of the three
+files, one tree that lists the contents of the directory and specifies which file names
+are stored as which blobs and one commit with the pointer to that root tree and all the
+commit metadata.
+If changes are made and committed again, the next commit stores a pointer to the commit that
+came immediately before it.
+A branch in Git is simply a lightweight movable pointer to one of these commits. The default
+branch name is master. Making commits, you're given a master branch that points to the last
+commit you made. When commits are made, it moves forward automatically.
+Note: The "master" branch is not a special branch. It is exactly like any other branch. The
+only reason every repository has one because it is created by default and most people don't
+bother changing the name.
+
+Creating a new branch:
+Creaing a new branch creates a pointer to move forward with.
+Creating a new branch:
+$ git branch <branch_name>
+
+Book example: 
+Creating a new branch "testing" is done with:
+$ git branch testing
+This creates a new pointer to the same commit you're one (the latest commit).
+Git keeps track on which branch you're currently on using a special pointer called "HEAD".
+This is a lot different from the concept of HEAD from other VCSs, such as Subversion or
+CVS. In Git, this pointer is the local branch you're currently on. The "git branch" command
+only created a new branch, it didn't switch to the new branch.
+You can easily see this by running a simple "git log" command that shows where the branch
+pointers are pointing. The option to use is "--decorate":
+(Output from book)
+$ git log --oneline --decorate
+f30ab (HEAD -> master, testing) add feature #32 - ability to add new formats to the
+central interface
+34ac2 Fixed bug #1328 - stack overflow under certain conditions
+98ca9 The initial commit of my project
+You can see "master" and "testing" next to the f30ab commit.
+
+Switching branches:
+To switch to an existing branch:
+$ git checkout <branch_name>
+$ git checkout testing
+This command moves HEAD pointing to the "testing" branch. When a change is made, the testing
+is moved forward but the master branch still points to the commit when the branch was
+changed. Switching back to the master would be:
+$ git checkout master
+The command did two things, it moved the HEAD back to the master branch and it reverted the
+files in the working directory back to the snapshot that master points to. This makes any
+changes made in the master branch diverge from an older version of the project. It rewinds
+the work done in the testing branch so that the project can go in a different direction.
+Note: Switching branches changes the files in the working directory. Switching to an older
+branch, the working directory will revert to look like it did the last time you committed on
+that branch. If Git cannot do that cleanly, the branch will not switch.
+Making a few changes in the master branch and then committing will result is two commits
+pointing to the commit where the branch was made. The project diverges at this point. A
+branch was made, changes were committed and switched back to the master branch, changes were
+committed there which made two commits that point to the previous commit. One in the master
+branch and the other in the testing branch. These two separate branches can be merged
+together when ready.
+The history of the project can be seen with:
+$ git log --oneline --decorate --graph --all
+This command will print out the history of the commits, where the branch pointers are and
+how the history has diverged.
+A branch is a simple that contains the 40 character SHA-1 checksum of the commit it points
+to, branches are easy to create and destroy. Creating a new branch writes 41 bytes to a
+file (40 characters and a newline).
+This is a major difference between to the way most older VCS tools branch, which involves
+copying  all the project's files into a second directory. This can take several seconds or
+even minutes, depending on the project size. But Git is always instantaneous. Also because
+the parent commits are recorded, finding a proper merge base for merging is automatically
+done and is generally very easy to do. It helps encourage developers to create and use
+branches.
+
+Basic branching and merging:
+Book example:
+Simple branching and merging using a real world workflow. The steps would be:
+1) Do some work on a website.
+2) Create a branch for a story you're working on.
+3) Do some work in that branch.
+Now, there is a critical issue and needs a hotfix. That requires:
+1) Switching to the main branch.
+2) Create a branch to add hotfix.
+3) After tested, marge the hotfix branch and push to main branch.
+4) Switch back to the branch with the story and continue working.
+
+Basic branching:
+Creating a new branch and switch to it:
+$ git checkout -b <branch_name>
+$ git checkout -b iss53
+This is a shorthand for:
+$ git branch iss53
+$ git checkout iss53
+This is before the critical issue.
+Work on the website and do some commits, the iss53 branch moves ahead since the HEAD is 
+pointing to the branch.
+Now, the critical issue needs fixing:
+Instead of adding the critical issue with the iss53 branch changes or reverting the changes
+before working on the critical issue, simply switch to the master branch.
+The working directory requires to be clean to switch branches, so commit the changes and
+switch to the master branch. There are ways to get around this using stashing and commit
+amending, which will be covered later in "Git Stashing". For now, assume all changes have
+been committed. Switching over to the master branch.
+$ git checkout master
+Now the project working directory would be how it was before the iss53 branch was made. Now
+just focus on the hotfix (the critical issue). Switching to the master branch will reset
+the files to what it looked like in the last commit before starting on iss53.
+To work on the hotfix:
+1) Create the hotfix branch:
+$ git checkout -b hotfix
+2) Make the fix and commit changes.
+3) Run tests and make sure it works. Then merge the branch into the master branch to
+push to the production website page. This is done with:
+$ git checkout master
+Switch to the master branch.
+$ git merge <branch_name>
+$ git merge hotfix
+Output would be something like:
+Updating <old_SHA-1_hash>..<new_SHA-1_hash>
+Fast-forward
+ index.html | 2++
+ 1 file changed, 2 insertions(+)
+The "fast-forward" phrase is there because the commit with the hotfix merge is the new
+commit added to the master branch. Git simply moved the pointer forward. Easier said,
+when merging one commit with a commit, that is done by following the first commit's
+history, Git simplifies things by moving the pointer forward because there is no divergent
+work to merge together. This is called a fast-forward.
+The change is in the snapshot of the commit pointed by the master branch and the fix can
+be deployed to production.
+After the important fix is done, you go back to iss53. Before that, delete the hotfix
+branch since it's no longer needed since the master branch points to the same branch. It
+is done with:
+$ git branch -d <branch_name>
+$ git branch -d hotfix
+Now switch to iss53 branch:
+$ git checkout iss53
+Make the changes and commit.
+Since the master branch was changed after the iss53 branch was made, it is important to
+merge the changes into the iss53 branch since it's not in here (iss53). To include the
+hotfix in the changes made for iss53, first switch to the master branch and then perform
+the merge of iss53 into the master. The merging is done like:
+$ git checkout master
+$ git merge iss53
+Output may look like:
+Merge made by the 'recursive' strategy.
+index.html | 1+
+1 file changed, 1 insertion(+)
+This looks a bit different that the hotfix merge. In this case, the development history
+has diverged for an older point. This is because the the commit of the branch isn't a
+direct ancestor of the branch yu're merging in. The commit branch has one commit more
+than when the iss53 branch was made. Git has to do some extra work, in this case, it does
+a three-way merge, using the two snapshots pointed by the branch tips and the common
+ancestor of the two.
+Instead of moving the branch pointer forward, Git creates a new snapshot that results from
+the three-way merge and automatically creates a new commit that points to it. This is
+referred to as a merge commit and is special in that it has more than one parent.
+Git determines the best common ancestor to use for its merge base, this is different than
+older tools like CVS or Subversion (before version 1.5), where the developer doing the
+merge has to figure out the best merge base for themselves (damn). This makes merging
+easier in Git than other systems.
+Now that the work is merged in, the iss53 branch can be deleted:
+$ git branch -d iss53
+
+Basic merge conflicts:
+Occasionally this wouldn't be going smoothly in a real world environment. If different
+changes were made to the same part of the file in two branches being merging together, Git
+won't merge them cleanly, both the changes will be combined in a file for your choosing. If
+the fix for iss53 modified the same part of a file as the hotfix branch, there'll be a
+merge conflict which would look like this book example:
+$ git merge iss53
+Output from book:
+Auto-merging iss53
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.
+Git hasn't created the automatic merge commit, it put the merging process on hold until
+the merge conflict is resolved. To see the files which hasn't been merged yet, the status
+command will list the files:
+$ git status
+Book output:
+On branch master
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+
+    both modified:      index.html
+
+no changes addded to commit (use "git add" and/or "git commit -a")
+Anything with merge conflicts and hasn't been fixed will be listed under the "Unmerged
+paths" heading. Git adds standard conflict-resolution markers to the files in conflict,
+that thing about both changes will be combined for your choosing. It would look like this,
+from the book example:
+<<<<<<< HEAD:index.html
+<div if="footer">contact : email.support@github.com</div>
+=======
+<div id="footer">
+ please contact us at support@github.com
+</div>
+>>>>>>> iss53:index.html
+This means the version in HEAD (the master branch, since we're merging the iss53 branch
+into the master branch) is the top part of the conflict block, above the the seven equal to
+signs. Or the HEAD basically represents the branch you're trying to being another branch
+changes into. While the changes from the other branch will be the bottom part. As mentioned
+before, you have to choose the changes to keep. Alternative, the changes can also be
+skipped entirely and add in something else. As done in the book, the conflict block was
+replaced by:
+<div id="footer">
+please contact us at email.support@github.com
+</div>
+The conflict-resolution has little sections, the sevan left angle brackets (<<<<<<<), the
+seven equal signs (=======) and the seven right angle brackets (>>>>>>>) lines have been
+removed when the conflict has been resolved. After resolving the conflicts, run the add
+command to mark the files as resolved in Git.
+If you want to use a graphical tool, you can. The command:
+$ git mergetool
+When running it the first time, a long message will be displayed about it not being
+configured and on how to configure it and whatever.
+Output from my shell:
+This message is displayed because 'merge.tool' is not configured.
+See 'git mergetool --tool-help' or 'git help config' for more details.
+'git mergetool' will now attempt to use one of the following tools:
+opendiff kdiff3 tkdiff xxdiff meld tortoisemerge gvimdiff diffuse diffmerge ecme
+rge p4merge araxis bc codecompare emerge vimdiff
+No files need merging
+I had nothing to merge, so it's fine. But there were the error messages. The ecme is
+actually just the partial of ecmerge since my terminal window isn't wide enough to display
+the entire line without splitting it.
+The "git mergetool" will try to run a list of tools that would be found on most systems,
+probably :P There is a list of supported tools (should be supported tools) when not set on
+a default tool to use.
+Yep. It lists the supported tools.
+Note: If more advanced tools are needed for resolving tricky merge conflicts, it is covered
+in the section "Advanced Merging".
+After completing tehe merge, Git will ask via a script if the merge was successful. If it
+was, and you confirm that it was, Git will automatically mark the file as resolved. To
+verify, run status command. There should be the heading "Changes to be committed" with the
+file listed under it.
+When done with resolving the conflicts, the commit command will continue to merge the
+changes between the two branches. Although there will be a default merge message:
+Merge branch <branch_name> and the conflict message below it, commented out. Then the rest
+are like the usual commit message.
+The commit message can be edited to include details on how the merge conflict was resolved
+and explain why the changes were made.
+
+Branch management:
+Creating, merging and deleting branches are done, branch management time. Useful when
+branches are used all the time. The branch command does more than just create and delete
+branches. Typing the branch command without any options lists the branches in the local
+repository, output with the previous example:
+$ git branch
+  iss53
+* master
+  testing
+The asterisk before the master branch means the HEAD is pointing to that branch. The branch
+that is currently in the working directory. Changes will get committed to this branch. To
+see the last commit on each branch, run the command:
+$ git branch -v
+  iss53   93b412c fix javascript issue
+* master  7a98805 Merge branch 'iss53'
+  testing 782fd34 add scott to the author list in the readmes
+A useful thing, the "--merged" and "--no-merged" options can filter the branch list that
+have or have not merged into the current branch. Too see which branch have been merged:
+$ git branch --merged
+  iss53
+* master
+This shows the iss53 branch has been merged with the master branch, so it's okay to delete
+the branch if the work for which the branch was created for is completed.
+To see branches that have not been merged with yet, the command:
+$ git branch --no-merged
+  testing
+This branch has changes not merged with the current (master) branch. Trying to delete this
+branch will fail unless forced. The command to force delete uses "-D" instead of "-d":
+$ git branch -D <branch_name>
+$ git branch -D testing
+Tip: The "--merged" and "--no-merged" will list what is merged or not merged to the current
+branch, if not given a commit or branch name as an argument.
+Additional arguments can be given about the merge state between the current and the
+specified branch (branch name as argument, what about the commit mentioned earlier), of
+another branch without checking out the other branch. For example, to check what is not
+merged:
+$ git checkout testing
+$ git branch --no-merged master
+  topicA
+  featureB
+
+Branching workflows:
+Basics of branching and merging down, what can or should you do with it? This section will
+cover some uncommon workflows that this branching method makes possible, so you can decide
+whether to use it in your own development cycle.
+
+Long-running branches:
+Git using a three-way merge makes merging one branch into another multiple times over a
+long period easy. This means having several branches that are always open and being used at
+different stages of development, one can be merged from others regularly.
+Might as well create a branch since I am done with the branching chapter.
